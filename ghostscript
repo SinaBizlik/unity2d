@@ -1,0 +1,58 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GhostScript : MonoBehaviour
+{
+    // Renklerin listesi
+    private Color[] colors = { Color.cyan, Color.yellow, Color.red, Color.black };
+    [SerializeField] 
+    private float bounceForce = 10f;
+    private Rigidbody2D rb;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        // Rastgele bir renk seçme
+        Color randomColor = colors[Random.Range(0, colors.Length)];
+
+        // Renderer bileşenini al
+        Renderer renderer = GetComponent<Renderer>();
+
+        // Seçilen rastgele rengi ghost prefabına uygula
+        renderer.material.color = randomColor;
+        rb = GetComponent<Rigidbody2D>();
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Game over! The player was captured by a ghost.");
+            Time.timeScale = 0; 
+        }
+        
+    }
+    
+
+    void OnCollisionEnters2D(Collision2D collision)
+        {
+        // İki ghost birbirine çarptığında
+        if (collision.gameObject.CompareTag("Ghost"))
+        {
+            // Çarpışan ghostun Rigidbody bileşenini al
+            Rigidbody2D otherRb = collision.gameObject.GetComponent<Rigidbody2D>();
+
+            // Kinematik hareket uygula (ghostların birbirinden geçmesini sağlar)
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            otherRb.bodyType = RigidbodyType2D.Kinematic;
+        }    
+}
+}
